@@ -1,0 +1,7 @@
+dao\ICustomerDAO.class
+model\Claim.class
+model\Main.class
+model\Policy.class
+dao\IBaseDAO.class
+dao\jbdc\CustomerDAO.class
+model\Customer.class
