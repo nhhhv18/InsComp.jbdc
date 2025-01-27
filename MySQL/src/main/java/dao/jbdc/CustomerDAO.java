@@ -8,16 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.*;
+import model.BasicConnectionPool;
 import model.Customer;
 
 public class CustomerDAO implements ICustomerDAO {
-	
+	static BasicConnectionPool connectionPool = BasicConnectionPool.create();
 	@Override
 	public Customer getEntityById(int id) {
 		Customer customer = new Customer();
 		String sql = "SELECT * FROM mydb.customers where customer_id = ?";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
-			
+		Connection connection = connectionPool.getConnection();
+		try {	
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	preparedStatement.setInt(1,  id);
 	ResultSet resultSet = preparedStatement.executeQuery();
@@ -35,7 +36,7 @@ public class CustomerDAO implements ICustomerDAO {
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}
+	} finally {connectionPool.releaseConnection(connection);}
 	return customer;
 	}
 	
@@ -47,8 +48,8 @@ public class CustomerDAO implements ICustomerDAO {
 		List<Customer> list = new ArrayList<>();
 	
 		String sql = "SELECT * FROM mydb.customers";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
-			
+		Connection connection = connectionPool.getConnection();
+			try {
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
@@ -67,7 +68,7 @@ public class CustomerDAO implements ICustomerDAO {
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}
+	} finally {connectionPool.releaseConnection(connection);}
 	return list;
 	}
 	
@@ -77,8 +78,8 @@ public class CustomerDAO implements ICustomerDAO {
 
 		String sql = "INSERT INTO `mydb`.`customers`(`FIRST_NAME`,`LAST_NAME`,`DATE_OF_BIRTH`,`EMAIL`,`PHONE`,`CITY`,`POSTAL_CODE`,`STREET`)\r\n"
 				+ "VALUES (?,?,?,?,?,?,?,?)";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
-			
+		Connection connection = connectionPool.getConnection();
+		try {	
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	preparedStatement.setString(1, customer.getFirstName());
 	preparedStatement.setString(2, customer.getLastName());
@@ -93,7 +94,7 @@ public class CustomerDAO implements ICustomerDAO {
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}
+	} finally {connectionPool.releaseConnection(connection);}
 
 	};
 	
@@ -105,7 +106,8 @@ public class CustomerDAO implements ICustomerDAO {
 		String sql = "UPDATE `mydb`.`customers` SET `FIRST_NAME` = ? WHERE `CUSTOMER_ID` = ?";
 		//String sql = "UPDATE `mydb`.`customers`\r\n"
 		//		+ "SET `FIRST_NAME` = ?, `LAST_NAME` = ?, `DATE_OF_BIRTH` = ?, `EMAIL` = ?, `PHONE` = ?, `CITY` = ?, `POSTAL_CODE` = ?, `STREET` = ? WHERE `CUSTOMER_ID` = ?";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
+		Connection connection = connectionPool.getConnection();
+		try {
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	preparedStatement.setString(1, customer.getFirstName());
 	//preparedStatement.setString(2, customer.getLastName());
@@ -120,8 +122,7 @@ public class CustomerDAO implements ICustomerDAO {
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}	
-		
+	} finally {connectionPool.releaseConnection(connection);}
 	
 	
 	
@@ -131,14 +132,15 @@ public class CustomerDAO implements ICustomerDAO {
 
 		String sql = "DELETE FROM `mydb`.`customers`\r\n"
 				+ "WHERE customer_id = ?";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
+		Connection connection = connectionPool.getConnection();
+		try {
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	preparedStatement.setInt(1,  id);
 	preparedStatement.execute();
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}
+	} finally {connectionPool.releaseConnection(connection);}
 		
 	};
 

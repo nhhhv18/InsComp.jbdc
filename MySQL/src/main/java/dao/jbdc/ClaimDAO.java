@@ -8,16 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.*;
+import model.BasicConnectionPool;
 import model.Claim;
 
 public class ClaimDAO implements IClaimDAO {
 	
+	static BasicConnectionPool connectionPool = BasicConnectionPool.create();
 	@Override
 	public Claim getEntityById(int id) {
 		Claim claim = new Claim();
 		String sql = "SELECT * FROM mydb.claims where claim_id = ?";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
-			
+	Connection connection = connectionPool.getConnection();
+		try	{
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	preparedStatement.setInt(1,  id);
 	ResultSet resultSet = preparedStatement.executeQuery();
@@ -33,7 +35,7 @@ public class ClaimDAO implements IClaimDAO {
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}
+	} finally {connectionPool.releaseConnection(connection);}
 	return claim;
 	}
 	
@@ -45,8 +47,8 @@ public class ClaimDAO implements IClaimDAO {
 		List<Claim> list = new ArrayList<>();
 	
 		String sql = "SELECT * FROM mydb.claims";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
-			
+		Connection connection = connectionPool.getConnection();
+		try	{		
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
@@ -62,7 +64,7 @@ public class ClaimDAO implements IClaimDAO {
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}
+	} finally {connectionPool.releaseConnection(connection);}
 	return list;
 	}
 	
@@ -71,8 +73,8 @@ public class ClaimDAO implements IClaimDAO {
 	public void insert(Claim claim) {
 
 		String sql = "INSERT INTO `mydb`.`claims`(`POLICY_ID`, `CLAIM_DATE`, `CLAIM_AMOUNT`, `CLAIM_STATUS_ID`, `DESCRIPTION`) VALUES (?,?,?,?,?)";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
-			
+		Connection connection = connectionPool.getConnection();
+		try {
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	preparedStatement.setInt(1, claim.getPolicyId());
 	preparedStatement.setString(2, claim.getClaimDate());
@@ -83,7 +85,7 @@ public class ClaimDAO implements IClaimDAO {
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}
+	} finally {connectionPool.releaseConnection(connection);}
 
 	};
 	
@@ -96,7 +98,8 @@ public class ClaimDAO implements IClaimDAO {
 				+ "SET\r\n"
 				+ "`DESCRIPTION` = ?\r\n"
 				+ "WHERE `CLAIM_ID` = ?";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
+		Connection connection = connectionPool.getConnection();
+		try {
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	//preparedStatement.setInt(1, claim.getPolicyId());
 	//preparedStatement.setString(2, claim.getClaimDate());
@@ -108,7 +111,7 @@ public class ClaimDAO implements IClaimDAO {
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}	
+	} finally {connectionPool.releaseConnection(connection);}
 		
 	
 	
@@ -119,14 +122,15 @@ public class ClaimDAO implements IClaimDAO {
 
 		String sql = "DELETE FROM `mydb`.`claims`\r\n"
 				+ "WHERE claim_id = ?";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
+		Connection connection = connectionPool.getConnection();
+		try {
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	preparedStatement.setInt(1,  id);
 	preparedStatement.execute();
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}
+	} finally {connectionPool.releaseConnection(connection);}
 		
 	};
 

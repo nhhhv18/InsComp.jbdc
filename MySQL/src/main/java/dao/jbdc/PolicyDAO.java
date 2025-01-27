@@ -1,4 +1,5 @@
 package dao.jbdc;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,16 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.*;
+import model.BasicConnectionPool;
 import model.Policy;
 
 public class PolicyDAO implements IPolicyDAO{
-
+	static BasicConnectionPool connectionPool = BasicConnectionPool.create();
 	@Override
 	public Policy getEntityById(int id) {
 		Policy policy = new Policy();
 		String sql = "SELECT * FROM mydb.policies where policy_id = ?";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
-			
+		Connection connection = connectionPool.getConnection();
+		try {	
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	preparedStatement.setInt(1,  id);
 	ResultSet resultSet = preparedStatement.executeQuery();
@@ -34,7 +36,7 @@ public class PolicyDAO implements IPolicyDAO{
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}
+	} finally {connectionPool.releaseConnection(connection);}
 	return policy;
 	}
 	
@@ -46,8 +48,8 @@ public class PolicyDAO implements IPolicyDAO{
 		List<Policy> list = new ArrayList<>();
 	
 		String sql = "SELECT * FROM mydb.policies";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
-			
+		Connection connection = connectionPool.getConnection();
+		try {	
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
@@ -65,7 +67,7 @@ public class PolicyDAO implements IPolicyDAO{
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}
+	} finally {connectionPool.releaseConnection(connection);}
 	return list;
 	}
 	
@@ -75,8 +77,8 @@ public class PolicyDAO implements IPolicyDAO{
 
 		String sql = "INSERT INTO `mydb`.`policies` (`POLICY_TYPE_ID`, `CUSTOMER_ID`, `START_DATE`, `END_DATE`, `COVERAGE_AMOUNT`, `PREMIUM_AMOUNT`, `AGENT_ID`) VALUES (?,?,?,?,?,?,?)";
 		
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
-			
+		Connection connection = connectionPool.getConnection();
+		try {	
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	preparedStatement.setInt(1, policy.getPolicyTypeId());
 	preparedStatement.setInt(2, policy.getCustomerId());
@@ -90,7 +92,7 @@ public class PolicyDAO implements IPolicyDAO{
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}
+	} finally {connectionPool.releaseConnection(connection);}
 
 	};
 	
@@ -100,7 +102,8 @@ public class PolicyDAO implements IPolicyDAO{
 	@Override
 	public void update (int id, Policy policy) {
 		String sql = "UPDATE `mydb`.`policies` SET `AGENT_ID` =  ? WHERE `POLICY_ID` = ?";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
+		Connection connection = connectionPool.getConnection();
+		try {
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	//preparedStatement.setInt(1, policy.getPolicyTypeId());
 	//preparedStatement.setInt(2, policy.getCustomerId());
@@ -114,7 +117,7 @@ public class PolicyDAO implements IPolicyDAO{
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}	
+	} finally {connectionPool.releaseConnection(connection);}
 		
 	
 	
@@ -124,14 +127,16 @@ public class PolicyDAO implements IPolicyDAO{
 	public void delete (int id) {
 
 		String sql = "DELETE FROM `mydb`.`policies` WHERE policy_id = ?";
-	try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
+		Connection connection = connectionPool.getConnection();
+		try {
+	//try	(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "82568572.Yana")){
 	PreparedStatement preparedStatement = connection.prepareStatement(sql);
 	preparedStatement.setInt(1,  id);
 	preparedStatement.execute();
 	} 
 	catch (SQLException e) {
 	System.out.println("Error");
-	}
+	} finally {connectionPool.releaseConnection(connection);}
 		
 	};
 
