@@ -1,4 +1,4 @@
-package dao.jbdc;
+package dao.jdbc;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.*;
+import dao.interfaces.ICustomerDAO;
 import model.BasicConnectionPool;
 import model.Customer;
 
-public class CustomerDAO implements ICustomerDAO {
+public class CustomerDAOjdbc implements ICustomerDAO {
 	static BasicConnectionPool connectionPool = BasicConnectionPool.create();
 	@Override
 	public Customer getEntityById(int id) {

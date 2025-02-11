@@ -1,4 +1,4 @@
-package dao.jbdc;
+package dao.jdbc;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.*;
+import dao.interfaces.IClaimDAO;
 import model.BasicConnectionPool;
 import model.Claim;
 
-public class ClaimDAO implements IClaimDAO {
+public class ClaimDAOjdbc implements IClaimDAO {
 	
 	static BasicConnectionPool connectionPool = BasicConnectionPool.create();
 	@Override

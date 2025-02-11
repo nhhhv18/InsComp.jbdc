@@ -1,4 +1,4 @@
-package dao.jbdc;
+package dao.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,10 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.*;
+import dao.interfaces.IPolicyDAO;
 import model.BasicConnectionPool;
 import model.Policy;
 
-public class PolicyDAO implements IPolicyDAO{
+public class PolicyDAOjdbc implements IPolicyDAO{
 	static BasicConnectionPool connectionPool = BasicConnectionPool.create();
 	@Override
 	public Policy getEntityById(int id) {
