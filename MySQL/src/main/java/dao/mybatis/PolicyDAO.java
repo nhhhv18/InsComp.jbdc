@@ -6,7 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -36,24 +38,37 @@ public Policy getEntityById(int index) {
 //      return policy;
 //  }
 }
-
 @Override
 public List<Policy> getEntities() {
-  return null;
+    try (SqlSession session = sqlSessionFactory.openSession()) {
+        return session.selectList("dao.interfaces.IPolicyDAO.getEntities");
+    }
 }
 
 @Override
 public void insert(Policy policy) {
-
+    try (SqlSession session = sqlSessionFactory.openSession(true)) { // Auto-commit enabled
+        session.insert("dao.interfaces.IPolicyDAO.insert", policy);
+    }
 }
 
 @Override
-public void delete(int index) {
-
+public void update(int id, Policy policy) {
+    try (SqlSession session = sqlSessionFactory.openSession()) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        params.put("policy", policy);
+        
+        session.update("dao.interfaces.IPolicyDAO.update", params);
+        session.commit();
+    }
 }
 
 @Override
-public void update(int index, Policy policy) {
-
+public void delete(int id) {
+    try (SqlSession session = sqlSessionFactory.openSession()) {
+        session.delete("dao.interfaces.IPolicyDAO.delete", id);
+        session.commit();
+    }
 }
 }

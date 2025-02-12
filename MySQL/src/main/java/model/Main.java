@@ -15,12 +15,13 @@ public class Main {
 		PolicyDAO policyDAO = new PolicyDAO();
 		AgentDAO agentDAO = new AgentDAO();
 		*/
+		
 		ICustomerDAO customerDAO = CustomerService.getStudentSelect();
 		Customer customer = customerDAO.getEntityById(3);
 		System.out.println(customer);
 		
 		IPolicyDAO policyDAO = PolicyService.getStudentSelect();
-		Policy policy = policyDAO.getEntityById(4);
+		Policy policy = policyDAO.getEntityById(6);
 		System.out.println(policy);
 		
 		IAgentDAO agentDAO = AgentService.getStudentSelect();
@@ -30,6 +31,24 @@ public class Main {
 		IClaimDAO claimDAO = ClaimService.getStudentSelect();
 		Claim claim = claimDAO.getEntityById(1);
 		System.out.println(claim);
+		
+		
+	//I only did all the methods for the IPolicyDAO
+		Policy policy1 = new Policy(31,2,3,"2025-02-14","2026-02-14", 135000, 700, 2);
+		policyDAO.insert(policy1);
+		
+		
+		Policy policy2 = policyDAO.getEntityById(1);
+	    policy2.setAgentId(3);
+		policyDAO.update(1, policy2);
+		
+	
+		List<Policy> listOfPolicies = new ArrayList<>();
+		listOfPolicies = policyDAO.getEntities();
+		System.out.println(listOfPolicies);
+		
+		//policyDAO.delete(30);
+		
 		//select by id
 		/*
 		Customer customer = customerDAO.getEntityById(3);
